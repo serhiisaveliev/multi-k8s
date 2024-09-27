@@ -2,22 +2,22 @@ language: generic
 sudo: required
 services:
   - docker
- 
- before_install:
+
+before_install:
   - docker build -t serhiidocker/react-test -f ./client/Dockerfile.dev ./client
 
-  script:
-    - docker run -e CI=true serhiidocker/react-test npm test
+script:
+  - docker run -e CI=true serhiidocker/react-test npm test
 
-    after_success:
-      - docker build -t serhiidocker/multi-client ./client
-      - docker build -t serhiidocker/multi-nginx ./nginx
-      - docker build -t serhiidocker/multi-server ./server
-      - docker build -t serhiidocker/multi-worker ./worker
-      # Log in to the docker CLI
-      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-      # Take those images and push them to docker hub
-      - docker push serhiidocker/multi-client
-      - docker push serhiidocker/multi-nginx
-      - docker push serhiidocker/multi-server
-      - docker push serhiidocker/multi-worker
+after_success:
+  - docker build -t serhiidocker/multi-client ./client
+  - docker build -t serhiidocker/multi-nginx ./nginx
+  - docker build -t serhiidocker/multi-server ./server
+  - docker build -t serhiidocker/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push serhiidocker/multi-client
+  - docker push serhiidocker/multi-nginx
+  - docker push serhiidocker/multi-server
+  - docker push serhiidocker/multi-worker
