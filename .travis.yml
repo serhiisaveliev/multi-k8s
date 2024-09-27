@@ -14,3 +14,10 @@ services:
       - docker build -t serhiidocker/multi-nginx ./nginx
       - docker build -t serhiidocker/multi-server ./server
       - docker build -t serhiidocker/multi-worker ./worker
+      # Log in to the docker CLI
+      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+      # Take those images and push them to docker hub
+      - docker push serhiidocker/multi-client
+      - docker push serhiidocker/multi-nginx
+      - docker push serhiidocker/multi-server
+      - docker push serhiidocker/multi-worker
