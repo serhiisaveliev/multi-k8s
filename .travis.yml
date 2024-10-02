@@ -1,5 +1,5 @@
-language: generic
 sudo: required
+language: generic
 services:
   - docker
 
@@ -21,3 +21,15 @@ after_success:
   - docker push serhiidocker/multi-nginx
   - docker push serhiidocker/multi-server
   - docker push serhiidocker/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: "eu-north-1"
+  app: "multi-docker"
+  env: "Multi-docker-env"
+  bucket_name: "elasticbeanstalk-eu-north-1-361769555763"
+  bucket_path: "docker-multi"
+  on:
+    branch: main
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: "$AWS_SECRET_KEY"
