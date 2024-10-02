@@ -17,6 +17,10 @@ const pgClient = new Pool({
   database: keys.pgDatabase,
   password: keys.pgPassword,
   port: keys.pgPort,
+  ssl:
+    process.env.NODE_ENV !== "production"
+      ? false
+      : { rejectUnauthorized: false },
 });
 
 pgClient.on("connect", (client) => {
@@ -28,15 +32,11 @@ pgClient.on("connect", (client) => {
 // Redis Client Setup
 const redis = require("redis");
 const redisClient = redis.createClient({
-  url: `redis://${keys.redisHost}:${keys.redisPort}`,
+  host: keys.redisHost,
+  port: keys.redisPort,
   retry_strategy: () => 1000,
 });
 const redisPublisher = redisClient.duplicate();
-
-(async () => {
-  await redisClient.connect();
-  await redisPublisher.connect();
-})();
 
 // Express route handlers
 
@@ -51,8 +51,9 @@ app.get("/values/all", async (req, res) => {
 });
 
 app.get("/values/current", async (req, res) => {
-  const values = await redisClient.hGetAll("values");
-  res.send(values);
+  redisClient.hgetall("values", (err, values) => {
+    res.send(values);
+  });
 });
 
 app.post("/values", async (req, res) => {
@@ -62,8 +63,8 @@ app.post("/values", async (req, res) => {
     return res.status(422).send("Index too high");
   }
 
-  await redisClient.hSet("values", index, "Nothing yet!");
-  await redisPublisher.publish("insert", index);
+  redisClient.hset("values", index, "Nothing yet!");
+  redisPublisher.publish("insert", index);
   pgClient.query("INSERT INTO values(number) VALUES($1)", [index]);
 
   res.send({ working: true });
