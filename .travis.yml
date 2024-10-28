@@ -8,8 +8,7 @@ env:
     - CLOUDSDK_CORE_DISABLE_PROMPTS=1
     - CLOUDSDK_PYTHON=python3.8 # Set Google Cloud SDK to use Python 3.8
 before_install:
-  # Add deadsnakes PPA and install Python 3.8
-  - sudo add-apt-repository ppa:deadsnakes/ppa -y
+  # Install Python 3.8 (now available by default on Ubuntu 20.04)
   - sudo apt-get update
   - sudo apt-get install -y python3.8
   - sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1
