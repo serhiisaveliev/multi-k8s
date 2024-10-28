@@ -1,4 +1,5 @@
 sudo: required
+dist: focal # Switch to Ubuntu 20.04, which includes Python 3.8 by default
 services:
   - docker
 env:
